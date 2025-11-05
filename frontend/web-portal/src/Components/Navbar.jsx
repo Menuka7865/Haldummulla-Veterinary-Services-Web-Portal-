@@ -20,7 +20,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="bg-white shadow-sm">
+    <nav className="bg-white shadow-sm fixed w-full z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -49,7 +49,7 @@ export default function Navbar() {
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
             <button
-              className="text-gray-700 hover:text-teal-600 transition-colors duration-200 text-sm font-medium">
+              className="text-gray-700 hover:text-white transition-colors duration-200 text-sm font-medium border px-4 py-2 rounded-md hover:bg-[#F97015] ">
               Login
             </button>
             <button
@@ -87,6 +87,7 @@ export default function Navbar() {
             </a>
           ))}
           <div className="pt-3 space-y-2 border-t">
+            
             <button
               className="w-full text-left text-gray-700 hover:text-teal-600 hover:bg-gray-50 px-3 py-2 rounded-md transition-colors duration-200 text-sm font-medium"
               onClick={() => {
