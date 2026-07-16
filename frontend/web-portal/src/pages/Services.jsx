@@ -6,38 +6,38 @@ const Services = () => {
   const features = [
     {
       id: 1,
-      icon: "📆",
+      icon: "🩺",
       title: "General Health Checkups",
       description:
-        "Schedule veterinary appointments and field visits conveniently online",
+        "Comprehensive physical examinations and diagnostic checks to maintain your animals' overall well-being.",
     },
     {
       id: 2,
-      icon: "📆",
-      title: "Vaccination Programs ",
+      icon: "💉",
+      title: "Vaccination Programs",
       description:
-        "Schedule veterinary appointments and field visits conveniently online",
+        "Routine immunization campaigns and customized vaccination schedules to prevent spreadable diseases.",
     },
     {
       id: 3,
-      icon: "📆",
-      title: "Emergency Care ",
+      icon: "🚨",
+      title: "Emergency Care",
       description:
-        "Schedule veterinary appointments and field visits conveniently online",
+        "Urgent response and immediate medical treatment for critical conditions, accidents, and sudden illnesses.",
     },
     {
-      id: 3,
-      icon: "📆",
-      title: "Online Consultations ",
+      id: 4,
+      icon: "💬",
+      title: "Online Consultations",
       description:
-        "Schedule veterinary appointments and field visits conveniently online",
+        "Get professional veterinary advice and guidance from the comfort of your home through virtual consultations.",
     },
     {
-      id: 3,
-      icon: "📖",
-      title: "Educational Resources ",
+      id: 5,
+      icon: "📚",
+      title: "Educational Resources",
       description:
-        "Schedule veterinary appointments and field visits conveniently online",
+        "Informative guides, husbandry tips, and preventative care articles to support the farming community.",
     },
   ];
   return (
@@ -48,10 +48,10 @@ const Services = () => {
           Our Services
         </h1>
         <h1 className=" text-xl lg:text-2xl font-bold text-left pt-1 pl-10">
-          Vacciumation Programs
+          Haldummulla Vet Hospital
         </h1>
-        <h1 className=" text-[10px] text-[#485454] text-left pt-1 pl-10">
-          Providing quality veterinary 
+        <h1 className=" text-[14px] text-[#485454] text-left pt-1 pl-10">
+          Providing quality veterinary care and support to the farming community.
         </h1>
           <div className="px-6 py-10 pt-20 bg-gray-50 ">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ml-3 ">
