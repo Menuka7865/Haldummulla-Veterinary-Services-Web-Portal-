@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import logoSteth from '../images/logoSteth.png';
@@ -13,10 +14,13 @@ const fadeUp = {
 };
 
 export default function Login() {
+  const navigate = useNavigate();
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
   const [errors, setErrors]     = useState({});
+  const [apiError, setApiError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const validate = () => {
     const e = {};
@@ -26,13 +30,39 @@ export default function Login() {
     return e;
   };
 
-  const handleSubmit = (ev) => {
+  const handleSubmit = async (ev) => {
     ev.preventDefault();
     const e = validate();
     if (Object.keys(e).length) { setErrors(e); return; }
     setErrors({});
-    // TODO: connect to backend
-    alert('Login submitted!');
+    setApiError('');
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem('user', JSON.stringify(data));
+        if (data.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/home');
+        }
+      } else {
+        setApiError(data.message || 'Login failed');
+      }
+    } catch (error) {
+      console.error(error);
+      setApiError('Server error, please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -115,13 +145,15 @@ export default function Login() {
             {/* Submit */}
             <motion.button
               type="submit"
-              className="w-full py-2.5 rounded-lg text-white font-semibold text-sm tracking-wide transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
+              disabled={isLoading}
+              className="w-full mt-1 py-2.5 rounded-lg text-white font-semibold text-sm tracking-wide transition-all duration-200 hover:opacity-90 active:scale-[0.98] disabled:opacity-70"
               style={{ background: 'linear-gradient(135deg, #0d9488, #14b8a6)' }}
               variants={fadeUp}
-              custom={5}
+              custom={4}
             >
-              Sign In
+              {isLoading ? 'Signing in...' : 'Sign In'}
             </motion.button>
+            {apiError && <p className="text-red-500 text-sm mt-3 text-center">{apiError}</p>}
           </form>
 
           {/* Divider */}
