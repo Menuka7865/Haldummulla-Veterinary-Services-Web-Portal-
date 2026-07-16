@@ -37,6 +37,22 @@ const announcements = [
       'The veterinary office will conduct an artificial insemination program for dairy cattle to improve milk yield and breeding efficiency. Farmers can register at the office before October 5 to participate in the program.',
     category: 'Breeding Service',
   },
+  {
+    id: 5,
+    date: 'September 10, 2025',
+    title: 'Livestock Disease Alert – Foot & Mouth',
+    description:
+      'An outbreak of Foot & Mouth disease has been reported in nearby areas. Farmers are urged to report any signs of illness in their cattle immediately to the veterinary office.',
+    category: 'Awareness Program',
+  },
+  {
+    id: 6,
+    date: 'August 20, 2025',
+    title: 'Free Deworming Camp for Goats & Sheep',
+    description:
+      'A free deworming and health checkup camp for goats and sheep will be conducted at the Haldummulla Veterinary Office on August 30. Bring animals between 8 AM and 12 PM.',
+    category: 'Vaccination Program',
+  },
 ];
 
 const categories = [
@@ -165,7 +181,7 @@ export default function Announcements() {
         </motion.div>
 
         {/* Announcement Cards */}
-        <div className="flex flex-col gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.length === 0 ? (
             <motion.p
               className="text-center text-gray-500 py-16"
@@ -179,7 +195,7 @@ export default function Announcements() {
             filtered.map((item, index) => (
               <motion.div
                 key={item.id}
-                className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden"
+                className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col"
                 style={{ borderLeft: '4px solid #0D9488' }}
                 initial="hidden"
                 whileInView="visible"
@@ -187,9 +203,9 @@ export default function Announcements() {
                 variants={fadeUp}
                 custom={index}
               >
-                <div className="p-5 md:p-6">
+                <div className="p-5 md:p-6 flex flex-col flex-1">
                   {/* Top row: date + category badge */}
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+                  <div className="flex flex-col items-start gap-2 mb-3">
                     <div className="flex items-center gap-2 text-gray-500 text-sm">
                       <Calendar size={14} className="text-gray-400" />
                       <span>{item.date}</span>
