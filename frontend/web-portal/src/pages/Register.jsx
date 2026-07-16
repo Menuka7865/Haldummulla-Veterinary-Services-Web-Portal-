@@ -13,65 +13,9 @@ const fadeUp = {
   }),
 };
 
-export default function Register() {
-  const navigate = useNavigate();
-  const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' });
-  const [showPass, setShowPass]        = useState(false);
-  const [showConfirm, setShowConfirm]  = useState(false);
-  const [errors, setErrors]            = useState({});
-  const [apiError, setApiError]        = useState('');
-  const [isLoading, setIsLoading]      = useState(false);
-
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-
-  const validate = () => {
-    const e = {};
-    if (!form.name.trim())        e.name = 'Full name is required.';
-    if (!form.email)              e.email = 'Email is required.';
-    else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = 'Enter a valid email.';
-    if (!form.password)           e.password = 'Password is required.';
-    else if (form.password.length < 6) e.password = 'Password must be at least 6 characters.';
-    if (!form.confirmPassword)    e.confirmPassword = 'Please confirm your password.';
-    else if (form.password !== form.confirmPassword) e.confirmPassword = 'Passwords do not match.';
-    return e;
-  };
-
-  const handleSubmit = async (ev) => {
-    ev.preventDefault();
-    const e = validate();
-    if (Object.keys(e).length) { setErrors(e); return; }
-    setErrors({});
-    setApiError('');
-    setIsLoading(true);
-
-    try {
-      const response = await fetch('http://localhost:5000/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          password: form.password,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Redirect to login after successful registration
-        navigate('/login');
-      } else {
-        setApiError(data.message || 'Registration failed');
-      }
-    } catch (error) {
-      console.error(error);
-      setApiError('Server error, please try again later.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const Field = ({ id, label, name, type, placeholder, icon: Icon, showToggle, show, onToggle, customIndex }) => (
+// ✅ Field is defined OUTSIDE Register so React never remounts it on re-render
+function Field({ id, label, name, type, placeholder, icon: Icon, showToggle, show, onToggle, customIndex, form, errors, handleChange }) {
+  return (
     <motion.div className="mb-5" variants={fadeUp} custom={customIndex}>
       <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1.5">
         {label}
@@ -97,6 +41,38 @@ export default function Register() {
       {errors[name] && <p className="text-red-500 text-xs mt-1">{errors[name]}</p>}
     </motion.div>
   );
+}
+
+export default function Register() {
+  const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' });
+  const [showPass, setShowPass]       = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [errors, setErrors]           = useState({});
+
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const validate = () => {
+    const e = {};
+    if (!form.name.trim())        e.name = 'Full name is required.';
+    if (!form.email)              e.email = 'Email is required.';
+    else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = 'Enter a valid email.';
+    if (!form.password)           e.password = 'Password is required.';
+    else if (form.password.length < 6) e.password = 'Password must be at least 6 characters.';
+    if (!form.confirmPassword)    e.confirmPassword = 'Please confirm your password.';
+    else if (form.password !== form.confirmPassword) e.confirmPassword = 'Passwords do not match.';
+    return e;
+  };
+
+  const handleSubmit = (ev) => {
+    ev.preventDefault();
+    const e = validate();
+    if (Object.keys(e).length) { setErrors(e); return; }
+    setErrors({});
+    // TODO: connect to backend
+    alert('Registration submitted!');
+  };
+
+  const fieldProps = { form, errors, handleChange };
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(135deg, #d1fae5 0%, #f0fdfa 40%, #e0f2fe 100%)' }}>
@@ -139,6 +115,7 @@ export default function Register() {
               icon={User}
               showToggle={false}
               customIndex={2}
+              {...fieldProps}
             />
 
             {/* Email */}
@@ -151,6 +128,7 @@ export default function Register() {
               icon={Mail}
               showToggle={false}
               customIndex={3}
+              {...fieldProps}
             />
 
             {/* Password */}
@@ -165,6 +143,7 @@ export default function Register() {
               show={showPass}
               onToggle={() => setShowPass(!showPass)}
               customIndex={4}
+              {...fieldProps}
             />
 
             {/* Confirm Password */}
@@ -179,6 +158,7 @@ export default function Register() {
               show={showConfirm}
               onToggle={() => setShowConfirm(!showConfirm)}
               customIndex={5}
+              {...fieldProps}
             />
 
             {/* Submit */}
