@@ -1,23 +1,30 @@
 function FeaturedResources({ items }) {
   return (
-    <section style={{ margin: '40px 0' }}>
-      <h2 style={sectionTitle}>Featured Resources</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '20px' }}>
+    <section className="my-8 sm:my-10">
+      <h2 className="text-lg sm:text-xl font-semibold mb-5 border-l-4 border-teal-600 pl-3">
+        Featured Resources
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {items.map(item => (
-          <div key={item.id} style={card}>
-            <span style={{ fontSize: '32px' }}>{item.icon}</span>
-            <h3 style={{ color: '#0d9488', margin: '12px 0 8px', fontSize: '17px' }}>{item.title}</h3>
-            <p style={{ fontSize: '13px', color: '#555', lineHeight: '1.6', flex: 1 }}>{item.description}</p>
-            <button style={btn}>{item.buttonLabel}</button>
+          <div
+            key={item.id}
+            className="bg-white border border-gray-200 rounded-xl p-5 sm:p-6 flex flex-col gap-1"
+          >
+            <span className="text-3xl">{item.icon}</span>
+            <h3 className="text-teal-600 mt-3 mb-2 text-base sm:text-[17px] font-semibold">
+              {item.title}
+            </h3>
+            <p className="text-sm text-gray-600 leading-relaxed flex-1">
+              {item.description}
+            </p>
+            <button className="mt-4 self-start bg-teal-600 text-white border-none py-2.5 px-4 rounded-lg text-sm cursor-pointer hover:bg-teal-700 transition-colors">
+              {item.buttonLabel}
+            </button>
           </div>
         ))}
       </div>
     </section>
   );
 }
-
-const sectionTitle = { fontSize: '20px', fontWeight: '600', marginBottom: '20px', borderLeft: '4px solid #0d9488', paddingLeft: '12px' };
-const card = { background: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '4px' };
-const btn = { marginTop: '16px', background: '#0d9488', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', alignSelf: 'flex-start' };
 
 export default FeaturedResources;

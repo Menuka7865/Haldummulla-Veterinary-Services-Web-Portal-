@@ -1,18 +1,21 @@
 function HeroSection() {
   return (
-    <div style={{ background: 'linear-gradient(135deg, #f0fdfa 0%, #ecfdf5 100%)', padding: '60px 40px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <div style={{ maxWidth: '500px', marginLeft: '200px' }}>
-        <h1 style={{ fontSize: '38px', color: '#134e4a', margin: '0 0 12px' }}>Educational Resources</h1>
-        <p style={{ color: '#555', fontSize: '15px', lineHeight: '1.7', marginBottom: '28px' }}>
-          Access guides, articles, videos, and veterinary information to improve animal health, livestock management, and farm productivity.
+    <div className="bg-gradient-to-br from-teal-50 to-emerald-50 px-6 sm:px-10 pt-12 sm:pt-16 pb-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+      <div className="max-w-full lg:max-w-[500px] text-center lg:text-left">
+        <h1 className="text-3xl sm:text-4xl lg:text-[38px] text-teal-900 mb-3 font-bold">
+          Educational Resources
+        </h1>
+        <p className="text-gray-600 text-sm sm:text-[15px] leading-relaxed mb-7">
+          Access guides, articles, videos, and veterinary information to
+          improve animal health, livestock management, and farm productivity.
         </p>
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
           <input
             type="text"
             placeholder="Search resources..."
-            style={{ padding: '10px 16px', border: '1px solid #ccc', borderRadius: '8px', width: '260px', fontSize: '14px' }}
+            className="px-4 py-2.5 border border-gray-300 rounded-lg w-full sm:w-64 text-sm"
           />
-          <select style={{ padding: '10px 14px', border: '1px solid #ccc', borderRadius: '8px', fontSize: '14px', background: '#fff' }}>
+          <select className="px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm bg-white">
             <option>All Categories</option>
             <option>Dairy Farming</option>
             <option>Livestock Management</option>
@@ -24,7 +27,7 @@ function HeroSection() {
       <img
         src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=420&h=260&fit=crop"
         alt="Farm animals"
-        style={{ borderRadius: '12px', width: '380px', objectFit: 'cover' }}
+        className="rounded-xl w-full max-w-[380px] h-[220px] sm:h-[260px] object-cover"
       />
     </div>
   );

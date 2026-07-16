@@ -1,13 +1,18 @@
 function DownloadSection({ downloads }) {
   return (
-    <section style={{ margin: '40px 0' }}>
-      <h2 style={sectionTitle}>Quick Download Resources</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '16px' }}>
+    <section className="my-8 sm:my-10">
+      <h2 className="text-lg sm:text-xl font-semibold mb-5 border-l-4 border-teal-600 pl-3">
+        Quick Download Resources
+      </h2>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {downloads.map(d => (
-          <div key={d.id} style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', textAlign: 'center' }}>
-            <div style={{ fontSize: '32px' }}>📄</div>
-            <p style={{ margin: 0, fontSize: '13px', fontWeight: '500', lineHeight: '1.4' }}>{d.title}</p>
-            <button style={{ background: '#fff', border: '1px solid #0d9488', color: '#0d9488', padding: '8px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', width: '100%' }}>
+          <div
+            key={d.id}
+            className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 flex flex-col items-center gap-3 text-center"
+          >
+            <div className="text-2xl sm:text-3xl">📄</div>
+            <p className="text-xs sm:text-sm font-medium leading-snug">{d.title}</p>
+            <button className="w-full bg-white border border-teal-600 text-teal-600 py-2 px-3 rounded-md text-xs sm:text-sm hover:bg-teal-600 hover:text-white transition-colors cursor-pointer">
               PDF Download
             </button>
           </div>
@@ -16,7 +21,5 @@ function DownloadSection({ downloads }) {
     </section>
   );
 }
-
-const sectionTitle = { fontSize: '20px', fontWeight: '600', marginBottom: '20px', borderLeft: '4px solid #0d9488', paddingLeft: '12px' };
 
 export default DownloadSection;

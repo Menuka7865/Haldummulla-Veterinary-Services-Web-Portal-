@@ -1,15 +1,19 @@
 function LatestArticles({ articles }) {
   return (
-    <section style={{ margin: '40px 0' }}>
-      <h2 style={sectionTitle}>Latest Articles</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '20px' }}>
+    <section className="my-8 sm:my-10">
+      <h2 className="text-lg sm:text-xl font-semibold mb-5 border-l-4 border-teal-600 pl-3">
+        Latest Articles
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {articles.map(a => (
-          <div key={a.id} style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden' }}>
-            <img src={a.image} alt={a.title} style={{ width: '100%', height: '160px', objectFit: 'cover' }} />
-            <div style={{ padding: '16px' }}>
-              <h4 style={{ margin: '0 0 8px', fontSize: '15px', lineHeight: '1.4' }}>{a.title}</h4>
-              <p style={{ fontSize: '13px', color: '#777', margin: '0 0 12px' }}>{a.excerpt}</p>
-              <a href="#!" style={{ color: '#0d9488', fontSize: '13px', textDecoration: 'none', fontWeight: '500' }}>Read More →</a>
+          <div key={a.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+            <img src={a.image} alt={a.title} className="w-full h-40 sm:h-44 object-cover" />
+            <div className="p-4">
+              <h4 className="mb-2 text-sm sm:text-[15px] leading-snug font-medium">{a.title}</h4>
+              <p className="text-xs sm:text-sm text-gray-500 mb-3">{a.excerpt}</p>
+              <a href="#!" className="text-teal-600 text-xs sm:text-sm no-underline font-medium">
+                Read More →
+              </a>
             </div>
           </div>
         ))}
@@ -17,7 +21,5 @@ function LatestArticles({ articles }) {
     </section>
   );
 }
-
-const sectionTitle = { fontSize: '20px', fontWeight: '600', marginBottom: '20px', borderLeft: '4px solid #0d9488', paddingLeft: '12px' };
 
 export default LatestArticles;
