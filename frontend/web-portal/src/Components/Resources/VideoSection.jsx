@@ -1,29 +1,38 @@
 function VideoSection({ videos }) {
   return (
-    <section style={{ margin: '40px 0' }}>
-      <h2 style={sectionTitle}>
-        <span style={{ background: '#0d9488', width: '10px', height: '10px', borderRadius: '2px', display: 'inline-block', marginRight: '10px' }}></span>
+    <section className="my-8 sm:my-10">
+      <h2 className="flex items-center text-lg sm:text-xl font-semibold mb-5 pl-1">
+        <span className="bg-teal-600 w-2.5 h-2.5 rounded-sm inline-block mr-2.5"></span>
         Learn Through Videos
       </h2>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', alignItems: 'start' }}>
-        <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden' }}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
+        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
           {videos.map((v, i) => (
-            <div key={v.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', borderBottom: i < videos.length - 1 ? '1px solid #f3f4f6' : 'none' }}>
-              <div style={{ width: '40px', height: '30px', background: '#e5e7eb', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>▶</div>
-              <span style={{ flex: 1, fontSize: '14px' }}>{v.title}</span>
-              <span style={{ fontSize: '13px', color: '#888', whiteSpace: 'nowrap' }}>{v.duration}</span>
+            <div
+              key={v.id}
+              className={`flex items-center gap-3 px-4 py-3.5 ${
+                i < videos.length - 1 ? 'border-b border-gray-100' : ''
+              }`}
+            >
+              <div className="w-10 h-[30px] bg-gray-200 rounded flex items-center justify-center shrink-0">
+                ▶
+              </div>
+              <span className="flex-1 text-sm truncate">{v.title}</span>
+              <span className="text-xs sm:text-sm text-gray-400 whitespace-nowrap">
+                {v.duration}
+              </span>
             </div>
           ))}
         </div>
-        <div style={{ background: '#f0fdfa', border: '1px solid #d1fae5', borderRadius: '12px', padding: '30px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-          <div style={{ fontSize: '48px' }}>🖥️</div>
-          <button style={{ background: '#0d9488', color: '#fff', border: 'none', padding: '12px 24px', borderRadius: '8px', cursor: 'pointer', fontSize: '14px' }}>Watch Videos</button>
+        <div className="bg-teal-50 border border-emerald-100 rounded-xl p-7 sm:p-8 flex flex-col items-center gap-4">
+          <div className="text-4xl sm:text-5xl">🖥️</div>
+          <button className="bg-teal-600 text-white border-none py-3 px-6 rounded-lg cursor-pointer text-sm hover:bg-teal-700 transition-colors">
+            Watch Videos
+          </button>
         </div>
       </div>
     </section>
   );
 }
-
-const sectionTitle = { fontSize: '20px', fontWeight: '600', marginBottom: '20px', paddingLeft: '4px' };
 
 export default VideoSection;

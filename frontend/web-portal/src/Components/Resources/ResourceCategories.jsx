@@ -1,18 +1,34 @@
 function ResourceCategories({ categories }) {
   return (
-    <section style={{ margin: '40px 0' }}>
-      <h2 style={sectionTitle}>Resource Categories</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px' }}>
+    <section className="my-8 sm:my-10">
+      <h2 className="text-lg sm:text-xl font-semibold mb-5 border-l-4 border-teal-600 pl-3">
+        Resource Categories
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {categories.map(cat => (
-          <div key={cat.id} style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
-            <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: cat.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', flexShrink: 0 }}>
+          <div
+            key={cat.id}
+            className="bg-white border border-gray-200 rounded-xl p-5 flex gap-3.5 items-start"
+          >
+            <div
+              className="w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-lg sm:text-xl shrink-0"
+              style={{ background: cat.color }}
+            >
               🐄
             </div>
             <div>
-              <h4 style={{ margin: '0 0 10px', color: cat.iconColor, fontSize: '15px' }}>{cat.title}</h4>
+              <h4
+                className="mb-2.5 text-sm sm:text-[15px] font-semibold"
+                style={{ color: cat.iconColor }}
+              >
+                {cat.title}
+              </h4>
               {cat.items.map(item => (
-                <p key={item} style={{ margin: '4px 0', fontSize: '13px', color: '#555', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span style={{ color: '#0d9488' }}>✓</span> {item}
+                <p
+                  key={item}
+                  className="my-1 text-xs sm:text-sm text-gray-600 flex items-center gap-1.5"
+                >
+                  <span className="text-teal-600">✓</span> {item}
                 </p>
               ))}
             </div>
@@ -22,7 +38,5 @@ function ResourceCategories({ categories }) {
     </section>
   );
 }
-
-const sectionTitle = { fontSize: '20px', fontWeight: '600', marginBottom: '20px', borderLeft: '4px solid #0d9488', paddingLeft: '12px' };
 
 export default ResourceCategories;
