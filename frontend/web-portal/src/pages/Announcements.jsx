@@ -1,73 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, ChevronDown, Search } from 'lucide-react';
+import { Calendar, ChevronDown, Search, Loader2, AlertCircle } from 'lucide-react';
 import Navbar from '../Components/Navbar.jsx';
 import Footer from '../Components/Footer.jsx';
 
-const announcements = [
-  {
-    id: 1,
-    date: 'November 2, 2025',
-    title: 'Rabies Vaccination Campaign – November 2025',
-    description:
-      'A free vaccination program for dogs and cattle will be held in Haldummulla town from Nov 10–15. Bring your animals to the central field clinic for treatment.',
-    category: 'Vaccination Program',
-  },
-  {
-    id: 2,
-    date: 'October 25, 2025',
-    title: 'Dairy Farm Health Workshop',
-    description:
-      'A special workshop on cow nutrition and disease prevention will be held at the Veterinary Office hall on Nov 20.',
-    category: 'Awareness Program',
-  },
-  {
-    id: 3,
-    date: 'October 10, 2025',
-    title: 'Field Visit Registration',
-    description:
-      'Farmers can now book field visits for animal checkups and breeding consultations through our online appointment portal.',
-    category: 'Farmer Service',
-  },
-  {
-    id: 4,
-    date: 'September 28, 2025',
-    title: 'Artificial Insemination Program for Dairy Cattle',
-    description:
-      'The veterinary office will conduct an artificial insemination program for dairy cattle to improve milk yield and breeding efficiency. Farmers can register at the office before October 5 to participate in the program.',
-    category: 'Breeding Service',
-  },
-  {
-    id: 5,
-    date: 'September 10, 2025',
-    title: 'Livestock Disease Alert – Foot & Mouth',
-    description:
-      'An outbreak of Foot & Mouth disease has been reported in nearby areas. Farmers are urged to report any signs of illness in their cattle immediately to the veterinary office.',
-    category: 'Awareness Program',
-  },
-  {
-    id: 6,
-    date: 'August 20, 2025',
-    title: 'Free Deworming Camp for Goats & Sheep',
-    description:
-      'A free deworming and health checkup camp for goats and sheep will be conducted at the Haldummulla Veterinary Office on August 30. Bring animals between 8 AM and 12 PM.',
-    category: 'Vaccination Program',
-  },
-];
+const API_BASE = 'http://localhost:5001/api/announcements';
 
-const categories = [
+const CATEGORIES = [
   'All Categories',
   'Vaccination Program',
   'Awareness Program',
   'Farmer Service',
   'Breeding Service',
+  'General',
 ];
 
 const categoryColors = {
   'Vaccination Program': { bg: '#E6F7F5', text: '#0D9488' },
-  'Awareness Program':   { bg: '#E6F7F5', text: '#0D9488' },
-  'Farmer Service':      { bg: '#E6F7F5', text: '#0D9488' },
-  'Breeding Service':    { bg: '#E6F7F5', text: '#0D9488' },
+  'Awareness Program':   { bg: '#FEF9C3', text: '#B45309' },
+  'Farmer Service':      { bg: '#EDE9FE', text: '#7C3AED' },
+  'Breeding Service':    { bg: '#FCE7F3', text: '#BE185D' },
+  'General':             { bg: '#E6F7F5', text: '#0D9488' },
 };
 
 const fadeUp = {
@@ -79,15 +32,45 @@ const fadeUp = {
   }),
 };
 
+// Format a date string to a readable format (e.g. "2026-07-10" → "July 10, 2026")
+const formatDate = (dateStr) => {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  if (isNaN(d)) return dateStr;
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+};
+
 export default function Announcements() {
+  const [announcements, setAnnouncements] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState('');
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  // Fetch only Active announcements from the backend
+  useEffect(() => {
+    const fetchAnnouncements = async () => {
+      setLoading(true);
+      setFetchError('');
+      try {
+        const res = await fetch(`${API_BASE}?status=Active`);
+        if (!res.ok) throw new Error('Failed to load announcements');
+        const data = await res.json();
+        setAnnouncements(data);
+      } catch (err) {
+        setFetchError(err.message || 'Could not connect to server.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAnnouncements();
+  }, []);
+
   const filtered = announcements.filter((a) => {
     const matchSearch =
       a.title.toLowerCase().includes(search.toLowerCase()) ||
-      a.description.toLowerCase().includes(search.toLowerCase());
+      (a.content || '').toLowerCase().includes(search.toLowerCase());
     const matchCategory =
       selectedCategory === 'All Categories' || a.category === selectedCategory;
     return matchSearch && matchCategory;
@@ -159,7 +142,7 @@ export default function Announcements() {
 
             {dropdownOpen && (
               <div className="absolute right-0 mt-1 w-52 bg-white border border-gray-200 rounded-md shadow-lg z-10">
-                {categories.map((cat) => (
+                {CATEGORIES.map((cat) => (
                   <button
                     key={cat}
                     onClick={() => {
@@ -180,61 +163,81 @@ export default function Announcements() {
           </div>
         </motion.div>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="flex flex-col items-center justify-center py-24 text-gray-400">
+            <Loader2 className="w-8 h-8 animate-spin mb-3 text-teal-500" />
+            <p className="text-sm">Loading announcements…</p>
+          </div>
+        )}
+
+        {/* Error State */}
+        {!loading && fetchError && (
+          <div className="flex items-center gap-3 bg-red-50 border border-red-200 text-red-700 px-5 py-4 rounded-xl text-sm max-w-xl mx-auto">
+            <AlertCircle className="w-5 h-5 shrink-0" />
+            <span>{fetchError}</span>
+          </div>
+        )}
+
         {/* Announcement Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.length === 0 ? (
-            <motion.p
-              className="text-center text-gray-500 py-16"
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-            >
-              No announcements found.
-            </motion.p>
-          ) : (
-            filtered.map((item, index) => (
-              <motion.div
-                key={item.id}
-                className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col"
-                style={{ borderLeft: '4px solid #0D9488' }}
+        {!loading && !fetchError && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filtered.length === 0 ? (
+              <motion.p
+                className="col-span-full text-center text-gray-500 py-16"
                 initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
+                animate="visible"
                 variants={fadeUp}
-                custom={index}
               >
-                <div className="p-5 md:p-6 flex flex-col flex-1">
-                  {/* Top row: date + category badge */}
-                  <div className="flex flex-col items-start gap-2 mb-3">
-                    <div className="flex items-center gap-2 text-gray-500 text-sm">
-                      <Calendar size={14} className="text-gray-400" />
-                      <span>{item.date}</span>
+                No announcements found.
+              </motion.p>
+            ) : (
+              filtered.map((item, index) => (
+                <motion.div
+                  key={item._id}
+                  className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col"
+                  style={{ borderLeft: '4px solid #0D9488' }}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={fadeUp}
+                  custom={index}
+                >
+                  <div className="p-5 md:p-6 flex flex-col flex-1">
+                    {/* Top row: date + category badge */}
+                    <div className="flex flex-col items-start gap-2 mb-3">
+                      <div className="flex items-center gap-2 text-gray-500 text-sm">
+                        <Calendar size={14} className="text-gray-400" />
+                        <span>{formatDate(item.date)}</span>
+                      </div>
+                      {item.category && (
+                        <span
+                          className="self-start sm:self-auto text-xs font-medium px-3 py-1 rounded-full"
+                          style={{
+                            backgroundColor: categoryColors[item.category]?.bg || '#E6F7F5',
+                            color: categoryColors[item.category]?.text || '#0D9488',
+                          }}
+                        >
+                          {item.category}
+                        </span>
+                      )}
                     </div>
-                    <span
-                      className="self-start sm:self-auto text-xs font-medium px-3 py-1 rounded-full"
-                      style={{
-                        backgroundColor: categoryColors[item.category]?.bg || '#E6F7F5',
-                        color: categoryColors[item.category]?.text || '#0D9488',
-                      }}
-                    >
-                      {item.category}
-                    </span>
+
+                    {/* Title */}
+                    <h2 className="text-base md:text-lg font-semibold text-gray-900 mb-2">
+                      {item.title}
+                    </h2>
+
+                    {/* Content (description) */}
+                    <p className="text-sm text-gray-600 leading-relaxed">
+                      {item.content}
+                    </p>
                   </div>
-
-                  {/* Title */}
-                  <h2 className="text-base md:text-lg font-semibold text-gray-900 mb-2">
-                    {item.title}
-                  </h2>
-
-                  {/* Description */}
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    {item.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))
-          )}
-        </div>
+                </motion.div>
+              ))
+            )}
+          </div>
+        )}
       </div>
 
       <Footer />
