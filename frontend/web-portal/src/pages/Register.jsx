@@ -44,10 +44,13 @@ function Field({ id, label, name, type, placeholder, icon: Icon, showToggle, sho
 }
 
 export default function Register() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' });
   const [showPass, setShowPass]       = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [errors, setErrors]           = useState({});
+  const [apiError, setApiError]       = useState('');
+  const [isLoading, setIsLoading]     = useState(false);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -63,13 +66,38 @@ export default function Register() {
     return e;
   };
 
-  const handleSubmit = (ev) => {
+  const handleSubmit = async (ev) => {
     ev.preventDefault();
     const e = validate();
     if (Object.keys(e).length) { setErrors(e); return; }
     setErrors({});
-    // TODO: connect to backend
-    alert('Registration submitted!');
+    setApiError('');
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          password: form.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        navigate('/login');
+      } else {
+        setApiError(data.message || 'Registration failed');
+      }
+    } catch (error) {
+      console.error(error);
+      setApiError('Server error, please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const fieldProps = { form, errors, handleChange };
