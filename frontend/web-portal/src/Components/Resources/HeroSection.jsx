@@ -1,7 +1,7 @@
 function HeroSection() {
   return (
     <div style={{ background: 'linear-gradient(135deg, #f0fdfa 0%, #ecfdf5 100%)', padding: '60px 40px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <div style={{ maxWidth: '500px' }}>
+      <div style={{ maxWidth: '500px', marginLeft: '200px' }}>
         <h1 style={{ fontSize: '38px', color: '#134e4a', margin: '0 0 12px' }}>Educational Resources</h1>
         <p style={{ color: '#555', fontSize: '15px', lineHeight: '1.7', marginBottom: '28px' }}>
           Access guides, articles, videos, and veterinary information to improve animal health, livestock management, and farm productivity.

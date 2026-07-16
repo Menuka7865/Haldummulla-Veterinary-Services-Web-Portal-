@@ -5,6 +5,8 @@ import ResourceCategories from '../components/Resources/ResourceCategories';
 import LatestArticles from '../components/Resources/LatestArticles';
 import VideoSection from '../components/Resources/VideoSection';
 import DownloadSection from '../components/Resources/DownloadSection';
+import Navbar from '../components/Navbar.jsx';
+import Footer from '../components/Footer.jsx';
 
 
 const fallbackData = {
@@ -196,12 +198,14 @@ function ResourcesPage() {
 
 
   return (
-    <div 
-      style={{
-        fontFamily: 'sans-serif',
-        color: '#222'
-      }}
-    >
+    <>
+      <Navbar />
+      <div 
+        style={{
+          fontFamily: 'sans-serif',
+          color: '#222'
+        }}
+      >
 
       <HeroSection />
 
@@ -301,7 +305,9 @@ function ResourcesPage() {
       </div>
 
 
-    </div>
+      </div>
+      <Footer />
+    </>
   );
 }
 
