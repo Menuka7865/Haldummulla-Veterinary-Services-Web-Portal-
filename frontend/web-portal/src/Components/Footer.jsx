@@ -31,7 +31,7 @@ export default function VetFooter() {
             <p className="text-sm md:text-base text-center font-semibold text-white">xxxxxxxxxxxxxxxxxxxxxx</p>
             
             <h3 className="text-lg md:text-xl font-semibold mt-4">Contact</h3>
-            <p className="text-sm md:text-base font-semibold text-white">0572 050 747</p>
+            <p className="text-sm md:text-base font-semibold text-white">0771234567</p>
             <p className="text-xs md:text-sm font-semibold text-white">email:xxxxxxxxxxxxxxxxx</p>
             
             <a 
