@@ -19,6 +19,12 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Please add all fields' });
     }
 
+    if (require('mongoose').connection.readyState !== 1) {
+      return res.status(503).json({ 
+        message: 'Database unavailable. Please start local MongoDB or set a valid MONGO_URI in backend/.env' 
+      });
+    }
+
     // Check if user exists
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -45,7 +51,10 @@ const registerUser = async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    if (error.name === 'MongooseError' || error.message.includes('buffering timed out')) {
+      return res.status(503).json({ message: 'Database connection timed out. Please check if MongoDB is running.' });
+    }
+    res.status(500).json({ message: error.message || 'Server error' });
   }
 };
 
@@ -58,6 +67,12 @@ const loginUser = async (req, res) => {
 
     if (!email || !password) {
       return res.status(400).json({ message: 'Please add all fields' });
+    }
+
+    if (require('mongoose').connection.readyState !== 1) {
+      return res.status(503).json({ 
+        message: 'Database unavailable. Please start local MongoDB or set a valid MONGO_URI in backend/.env' 
+      });
     }
 
     // Check for user email
@@ -77,7 +92,10 @@ const loginUser = async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    if (error.name === 'MongooseError' || error.message.includes('buffering timed out')) {
+      return res.status(503).json({ message: 'Database connection timed out. Please check if MongoDB is running.' });
+    }
+    res.status(500).json({ message: error.message || 'Server error' });
   }
 };
 
