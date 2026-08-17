@@ -74,9 +74,11 @@ function ResourcesPage() {
                 </p>
               </div>
             </div>
-            <button className="w-full sm:w-auto bg-teal-600 text-white border-none py-3.5 px-7 rounded-lg text-sm sm:text-[15px] cursor-pointer hover:bg-teal-700 transition-colors whitespace-nowrap">
-              Book Appointment →
-            </button>
+            <a href="/appointments" className="w-full sm:w-auto">
+              <button className="w-full sm:w-auto bg-teal-600 text-white border-none py-3.5 px-7 rounded-lg text-sm sm:text-[15px] cursor-pointer hover:bg-teal-700 transition-colors whitespace-nowrap">
+                Book Appointment →
+              </button>
+            </a>
           </div>
         </div>
       </div>

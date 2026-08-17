@@ -144,12 +144,15 @@ export default function Contact() {
                   <div className="flex items-start space-x-3">
                     <Phone className="h-6 w-6 text-teal-600 shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="text-sm font-semibold text-gray-700">Phone</h4>
-                      <p className="text-sm text-gray-600 mt-0.5">
-                        Office: <a href="tel:0572050747" className="hover:text-teal-600 transition-colors">057 2050 747</a>
+                      <h4 className="text-sm font-semibold text-gray-700">Phone & Hotline</h4>
+                      <p className="text-sm text-gray-700 font-medium mt-0.5">
+                        Emergency Hotline: <a href="tel:0771234567" className="text-teal-600 hover:underline font-semibold">0771234567</a>
                       </p>
                       <p className="text-sm text-gray-600">
-                        Dr. E.C. Jeewani: <a href="tel:0573571958" className="hover:text-teal-600 transition-colors">057 3571 958</a>
+                        Government Vet Surgeon: <span className="text-gray-800 font-medium">Dr. S.T.H.K. Senanayake</span>
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Office: <a href="tel:0572050747" className="hover:text-teal-600 transition-colors">057 2050 747</a>
                       </p>
                     </div>
                   </div>

@@ -28,11 +28,11 @@ export default function VetFooter() {
           {/* Contact Section */}
           <div className="flex flex-col items-center md:flex-1 md:mx-16 ">
             <h3 className="text-lg md:text-xl font-semibold">Address</h3>
-            <p className="text-sm md:text-base text-center font-semibold text-white">xxxxxxxxxxxxxxxxxxxxxx</p>
+            <p className="text-sm md:text-base text-center font-semibold text-white">Government Veterinary Office, Haldummulla</p>
             
             <h3 className="text-lg md:text-xl font-semibold mt-4">Contact</h3>
             <p className="text-sm md:text-base font-semibold text-white">0771234567</p>
-            <p className="text-xs md:text-sm font-semibold text-white">email:xxxxxxxxxxxxxxxxx</p>
+            <p className="text-xs md:text-sm font-semibold text-white">Email: info@haldummullavet.gov.lk</p>
             
             <a 
               href="https://facebook.com" 

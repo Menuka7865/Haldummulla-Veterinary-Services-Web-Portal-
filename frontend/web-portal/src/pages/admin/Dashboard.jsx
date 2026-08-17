@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Stethoscope, CalendarCheck, MessageSquare, Megaphone } from 'lucide-react';
 
-const API_BASE = 'http://localhost:5001/api/announcements';
+const API_BASE = 'http://localhost:5000/api/announcements';
 
 const getToken = () => {
   try {

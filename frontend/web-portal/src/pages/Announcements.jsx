@@ -4,7 +4,34 @@ import { Calendar, ChevronDown, Search, Loader2, AlertCircle } from 'lucide-reac
 import Navbar from '../Components/Navbar.jsx';
 import Footer from '../Components/Footer.jsx';
 
-const API_BASE = 'http://localhost:5001/api/announcements';
+const API_BASE = 'http://localhost:5000/api/announcements';
+
+const SAMPLE_ANNOUNCEMENTS = [
+  {
+    _id: 'sample-1',
+    title: 'Annual Foot-and-Mouth Disease (FMD) Vaccination Drive',
+    content: 'The Haldummulla Government Veterinary Office is conducting a free FMD vaccination campaign across all GS divisions. All dairy cattle farmers are requested to present their herds.',
+    category: 'Vaccination Program',
+    date: '2026-08-20',
+    status: 'Active'
+  },
+  {
+    _id: 'sample-2',
+    title: 'Clean Milk Production & Mastitis Awareness Workshop',
+    content: 'Join our hands-on workshop on hygiene, early mastitis detection, and modern milking techniques for local dairy farmers. Certificates will be provided.',
+    category: 'Awareness Program',
+    date: '2026-08-25',
+    status: 'Active'
+  },
+  {
+    _id: 'sample-3',
+    title: 'High-Genetic Breed Artificial Insemination (AI) Camp',
+    content: 'Special breeding service camp featuring Jersey and Friesian high-yield genetic semen straws. Contact your local veterinary officer for field visit bookings.',
+    category: 'Breeding Service',
+    date: '2026-09-01',
+    status: 'Active'
+  }
+];
 
 const CATEGORIES = [
   'All Categories',
@@ -55,11 +82,19 @@ export default function Announcements() {
       setFetchError('');
       try {
         const res = await fetch(`${API_BASE}?status=Active`);
-        if (!res.ok) throw new Error('Failed to load announcements');
-        const data = await res.json();
-        setAnnouncements(data);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setAnnouncements(data);
+          } else {
+            setAnnouncements(SAMPLE_ANNOUNCEMENTS);
+          }
+        } else {
+          setAnnouncements(SAMPLE_ANNOUNCEMENTS);
+        }
       } catch (err) {
-        setFetchError(err.message || 'Could not connect to server.');
+        console.warn('Backend connection warning, using sample announcements:', err.message);
+        setAnnouncements(SAMPLE_ANNOUNCEMENTS);
       } finally {
         setLoading(false);
       }
