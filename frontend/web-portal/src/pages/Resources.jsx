@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import Navbar from '../components/Navbar.jsx';
-import Footer from '../components/Footer.jsx';
-import HeroSection from '../components/Resources/HeroSection';
-import FeaturedResources from '../components/Resources/FeaturedResources';
-import ResourceCategories from '../components/Resources/ResourceCategories';
-import LatestArticles from '../components/Resources/LatestArticles';
-import VideoSection from '../components/Resources/VideoSection';
-import DownloadSection from '../components/Resources/DownloadSection';
+import Navbar from '../Components/Navbar.jsx';
+import Footer from '../Components/Footer.jsx';
+import HeroSection from '../Components/Resources/HeroSection';
+import FeaturedResources from '../Components/Resources/FeaturedResources';
+import ResourceCategories from '../Components/Resources/ResourceCategories';
+import LatestArticles from '../Components/Resources/LatestArticles';
+import VideoSection from '../Components/Resources/VideoSection';
+import DownloadSection from '../Components/Resources/DownloadSection';
 
 const fallbackData = {
   featured: [
