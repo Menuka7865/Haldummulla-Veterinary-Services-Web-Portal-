@@ -24,14 +24,14 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
+          <a href="/" className="flex items-center space-x-2 group">
             <img
               src={logoSteth}
               alt="Haldummulla Vet Logo"
-              className="h-8 w-8"
+              className="h-8 w-8 transition-transform group-hover:scale-105"
             />
-            <span className="text-xl font-semibold text-teal-600">Haldummulla Vet</span>
-          </div>
+            <span className="text-xl font-semibold text-teal-600 group-hover:text-teal-700 transition-colors">Haldummulla Vet</span>
+          </a>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
