@@ -7,14 +7,16 @@ function DownloadSection({ downloads }) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {downloads.map(d => (
           <div
-            key={d.id}
+            key={d._id}
             className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 flex flex-col items-center gap-3 text-center"
           >
             <div className="text-2xl sm:text-3xl">📄</div>
-            <p className="text-xs sm:text-sm font-medium leading-snug">{d.title}</p>
-            <button className="w-full bg-white border border-teal-600 text-teal-600 py-2 px-3 rounded-md text-xs sm:text-sm hover:bg-teal-600 hover:text-white transition-colors cursor-pointer">
-              PDF Download
-            </button>
+            <p className="text-xs sm:text-sm font-medium leading-snug flex-1">{d.title}</p>
+            <a href={d.fileUrl} target="_blank" rel="noreferrer" className="w-full">
+              <button className="w-full bg-white border border-teal-600 text-teal-600 py-2 px-3 rounded-md text-xs sm:text-sm hover:bg-teal-600 hover:text-white transition-colors cursor-pointer">
+                PDF Download
+              </button>
+            </a>
           </div>
         ))}
       </div>

@@ -1,37 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, ChevronDown, Search, Loader2, AlertCircle } from 'lucide-react';
+import { Calendar, ChevronDown, Search, Loader2, AlertCircle, Megaphone } from 'lucide-react';
 import Navbar from '../Components/Navbar.jsx';
 import Footer from '../Components/Footer.jsx';
 
 const API_BASE = 'http://localhost:5000/api/announcements';
-
-const SAMPLE_ANNOUNCEMENTS = [
-  {
-    _id: 'sample-1',
-    title: 'Annual Foot-and-Mouth Disease (FMD) Vaccination Drive',
-    content: 'The Haldummulla Government Veterinary Office is conducting a free FMD vaccination campaign across all GS divisions. All dairy cattle farmers are requested to present their herds.',
-    category: 'Vaccination Program',
-    date: '2026-08-20',
-    status: 'Active'
-  },
-  {
-    _id: 'sample-2',
-    title: 'Clean Milk Production & Mastitis Awareness Workshop',
-    content: 'Join our hands-on workshop on hygiene, early mastitis detection, and modern milking techniques for local dairy farmers. Certificates will be provided.',
-    category: 'Awareness Program',
-    date: '2026-08-25',
-    status: 'Active'
-  },
-  {
-    _id: 'sample-3',
-    title: 'High-Genetic Breed Artificial Insemination (AI) Camp',
-    content: 'Special breeding service camp featuring Jersey and Friesian high-yield genetic semen straws. Contact your local veterinary officer for field visit bookings.',
-    category: 'Breeding Service',
-    date: '2026-09-01',
-    status: 'Active'
-  }
-];
 
 const CATEGORIES = [
   'All Categories',
@@ -82,19 +55,14 @@ export default function Announcements() {
       setFetchError('');
       try {
         const res = await fetch(`${API_BASE}?status=Active`);
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
-            setAnnouncements(data);
-          } else {
-            setAnnouncements(SAMPLE_ANNOUNCEMENTS);
-          }
-        } else {
-          setAnnouncements(SAMPLE_ANNOUNCEMENTS);
+        if (!res.ok) {
+          throw new Error(`Server responded with status ${res.status}`);
         }
+        const data = await res.json();
+        setAnnouncements(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.warn('Backend connection warning, using sample announcements:', err.message);
-        setAnnouncements(SAMPLE_ANNOUNCEMENTS);
+        console.error('Failed to fetch announcements:', err.message);
+        setFetchError('Unable to load announcements. Please check your connection or try again later.');
       } finally {
         setLoading(false);
       }
@@ -102,9 +70,10 @@ export default function Announcements() {
     fetchAnnouncements();
   }, []);
 
+  // Client-side filtering by search text and category
   const filtered = announcements.filter((a) => {
     const matchSearch =
-      a.title.toLowerCase().includes(search.toLowerCase()) ||
+      (a.title || '').toLowerCase().includes(search.toLowerCase()) ||
       (a.content || '').toLowerCase().includes(search.toLowerCase());
     const matchCategory =
       selectedCategory === 'All Categories' || a.category === selectedCategory;
@@ -218,14 +187,21 @@ export default function Announcements() {
         {!loading && !fetchError && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.length === 0 ? (
-              <motion.p
-                className="col-span-full text-center text-gray-500 py-16"
+              /* Empty State */
+              <motion.div
+                className="col-span-full flex flex-col items-center justify-center py-20 text-gray-400"
                 initial="hidden"
                 animate="visible"
                 variants={fadeUp}
               >
-                No announcements found.
-              </motion.p>
+                <Megaphone className="w-12 h-12 mb-4 text-teal-200" strokeWidth={1.5} />
+                <p className="text-base font-medium text-gray-500">No announcements found</p>
+                <p className="text-sm mt-1 text-gray-400">
+                  {announcements.length === 0
+                    ? 'There are no active announcements at the moment.'
+                    : 'Try adjusting your search or filter.'}
+                </p>
+              </motion.div>
             ) : (
               filtered.map((item, index) => (
                 <motion.div
