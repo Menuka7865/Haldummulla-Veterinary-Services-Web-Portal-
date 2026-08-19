@@ -24,14 +24,14 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
+          <a href="/" className="flex items-center space-x-2 group">
             <img
               src={logoSteth}
               alt="Haldummulla Vet Logo"
-              className="h-8 w-8"
+              className="h-8 w-8 transition-transform group-hover:scale-105"
             />
-            <span className="text-xl font-semibold text-teal-600">Haldummulla Vet</span>
-          </div>
+            <span className="text-xl font-semibold text-teal-600 group-hover:text-teal-700 transition-colors">Haldummulla Vet</span>
+          </a>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
@@ -48,15 +48,16 @@ export default function Navbar() {
 
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <button
+            <a
+              href="/login"
               className="text-gray-700 hover:text-teal-600 transition-colors duration-200 text-sm font-medium">
               Login
-            </button>
-            <button
-              className="bg-teal-600 text-white px-6 py-2 rounded-md hover:bg-teal-700 transition-colors duration-200 text-sm font-medium"
-            >
+            </a>
+            <a
+              href="/register"
+              className="bg-teal-600 text-white px-6 py-2 rounded-md hover:bg-teal-700 transition-colors duration-200 text-sm font-medium">
               Register
-            </button>
+            </a>
           </div>
 
           {/* Mobile Menu Button */}
@@ -87,24 +88,20 @@ export default function Navbar() {
             </a>
           ))}
           <div className="pt-3 space-y-2 border-t">
-            <button
-              className="w-full text-left text-gray-700 hover:text-teal-600 hover:bg-gray-50 px-3 py-2 rounded-md transition-colors duration-200 text-sm font-medium"
-              onClick={() => {
-                setIsOpen(false);
-                navigate('/login');
-              }}
+            <a
+              href="/login"
+              className="block w-full text-left text-gray-700 hover:text-teal-600 hover:bg-gray-50 px-3 py-2 rounded-md transition-colors duration-200 text-sm font-medium"
+              onClick={() => setIsOpen(false)}
             >
               Login
-            </button>
-            <button
-              className="w-full bg-teal-600 text-white px-3 py-2 rounded-md hover:bg-teal-700 transition-colors duration-200 text-sm font-medium"
-              onClick={() => {
-                setIsOpen(false);
-                navigate('/register');
-              }}
+            </a>
+            <a
+              href="/register"
+              className="block w-full text-center bg-teal-600 text-white px-3 py-2 rounded-md hover:bg-teal-700 transition-colors duration-200 text-sm font-medium"
+              onClick={() => setIsOpen(false)}
             >
               Register
-            </button>
+            </a>
           </div>
         </div>
       </div>

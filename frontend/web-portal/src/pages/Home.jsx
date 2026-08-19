@@ -1,7 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import Navbar from '../components/Navbar.jsx'
-import Footer from '../components/Footer.jsx'
+import Navbar from '../Components/Navbar.jsx'
+import Footer from '../Components/Footer.jsx'
 
 function Home() {
   const features = [
