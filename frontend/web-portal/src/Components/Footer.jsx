@@ -1,7 +1,19 @@
 import React from 'react';
 import { Facebook } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function VetFooter() {
+  const { t } = useTranslation();
+
+  const navItems = [
+    { key: 'home', path: '/home' },
+    { key: 'services', path: '/services' },
+    { key: 'appointments', path: '/appointments' },
+    { key: 'announcements', path: '/announcements' },
+    { key: 'resources', path: '/resources' },
+    { key: 'contact', path: '/contact' },
+  ];
+
   return (
     <footer className="bg-teal-500 text-black py-12 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
@@ -19,18 +31,18 @@ export default function VetFooter() {
                 <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
               </svg>
             </div>
-            <h2 className="text-2xl md:text-3xl font-bold">Haldummulla Vet</h2>
+            <h2 className="text-2xl md:text-3xl font-bold">{t('footer.title')}</h2>
             <p className="text-sm md:text-base text-center md:text-left max-w-xs text-[#283030]">
-              Providing quality veterinary care and support to the farming community
+              {t('footer.description')}
             </p>
           </div>
 
           {/* Contact Section */}
           <div className="flex flex-col items-center md:flex-1 md:mx-16 ">
-            <h3 className="text-lg md:text-xl font-semibold">Address</h3>
-            <p className="text-sm md:text-base text-center font-semibold text-white">Government Veterinary Office, Haldummulla</p>
+            <h3 className="text-lg md:text-xl font-semibold">{t('footer.addressTitle')}</h3>
+            <p className="text-sm md:text-base text-center font-semibold text-white">{t('footer.address')}</p>
             
-            <h3 className="text-lg md:text-xl font-semibold mt-4">Contact</h3>
+            <h3 className="text-lg md:text-xl font-semibold mt-4">{t('footer.contactTitle')}</h3>
             <p className="text-sm md:text-base font-semibold text-white">0771234567</p>
             <p className="text-xs md:text-sm font-semibold text-white">Email: info@haldummullavet.gov.lk</p>
             
@@ -47,26 +59,13 @@ export default function VetFooter() {
 
           {/* Pages Section */}
           <div className="flex flex-col items-center md:items-start md:flex-1 space-y-3">
-            <h3 className="text-lg md:text-xl font-semibold mb-2">Pages</h3>
+            <h3 className="text-lg md:text-xl font-semibold mb-2">{t('footer.pagesTitle')}</h3>
             <nav className="flex flex-col items-center md:items-start space-y-2 text-white">
-              <a href="/home" className="text-sm md:text-base hover:underline transition-all">
-                Home
-              </a>
-              <a href="/services" className="text-sm md:text-base hover:underline transition-all">
-                Services
-              </a>
-              <a href="/appointments" className="text-sm md:text-base hover:underline transition-all">
-                Appointments
-              </a>
-              <a href="/announcements" className="text-sm md:text-base hover:underline transition-all">
-                Announcements
-              </a>
-              <a href="/resources" className="text-sm md:text-base hover:underline transition-all">
-                Resources
-              </a>
-              <a href="/contact" className="text-sm md:text-base hover:underline transition-all">
-                Contact
-              </a>
+              {navItems.map((item) => (
+                <a key={item.key} href={item.path} className="text-sm md:text-base hover:underline transition-all">
+                  {t(`nav.${item.key}`)}
+                </a>
+              ))}
             </nav>
           </div>
         </div>

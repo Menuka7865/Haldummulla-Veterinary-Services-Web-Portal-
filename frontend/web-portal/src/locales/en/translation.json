@@ -1,0 +1,21 @@
+{
+  "nav": {
+    "title": "Haldummulla Vet",
+    "home": "Home",
+    "services": "Services",
+    "appointments": "Appointments",
+    "announcements": "Announcements",
+    "resources": "Resources",
+    "contact": "Contact",
+    "login": "Login",
+    "register": "Register"
+  },
+  "footer": {
+    "title": "Haldummulla Vet",
+    "description": "Providing quality veterinary care and support to the farming community",
+    "addressTitle": "Address",
+    "address": "Government Veterinary Office, Haldummulla",
+    "contactTitle": "Contact",
+    "pagesTitle": "Pages"
+  }
+}
