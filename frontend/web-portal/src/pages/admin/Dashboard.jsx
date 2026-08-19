@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Stethoscope, CalendarCheck, MessageSquare, Megaphone } from 'lucide-react';
+import { Stethoscope, CalendarCheck, MessageSquare, Megaphone, RefreshCw } from 'lucide-react';
 
-const API_BASE = 'http://localhost:5000/api/announcements';
+const APIS = {
+  announcements: 'http://localhost:5000/api/announcements',
+  services:      'http://localhost:5000/api/services',
+  appointments:  'http://localhost:5000/api/appointments',
+  inquiries:     'http://localhost:5000/api/inquiries',
+};
 
 const getToken = () => {
   try {
@@ -11,13 +16,6 @@ const getToken = () => {
     return null;
   }
 };
-
-const recentAppointments = [
-  { id: 1, farmer: 'Sunil Perera',     animal: 'Dairy Cow', date: '2026-07-18', status: 'Pending'  },
-  { id: 2, farmer: 'Nimal Fernando',   animal: 'Goat',      date: '2026-07-19', status: 'Approved' },
-  { id: 3, farmer: 'Kamala Silva',     animal: 'Buffalo',   date: '2026-07-20', status: 'Pending'  },
-  { id: 4, farmer: 'Rohan Jayawardena',animal: 'Poultry',   date: '2026-07-21', status: 'Approved' },
-];
 
 const statusBadge = (status) => {
   const map = {
@@ -33,74 +31,126 @@ const statusBadge = (status) => {
 };
 
 export default function Dashboard() {
-  const [announcementTotal, setAnnouncementTotal]   = useState('—');
-  const [announcementActive, setAnnouncementActive] = useState('—');
+  const [stats, setStats] = useState({
+    servicesTotal:       '—',
+    appointmentsTotal:   '—',
+    appointmentsPending: '—',
+    inquiriesTotal:      '—',
+    inquiriesUnread:     '—',
+    announcementTotal:   '—',
+    announcementActive:  '—',
+  });
+  const [loading, setLoading] = useState(true);
+
+  const fetchAllStats = async () => {
+    setLoading(true);
+    try {
+      const [servicesRes, appointmentsRes, inquiriesRes, announcementsRes] = await Promise.allSettled([
+        fetch(APIS.services),
+        fetch(APIS.appointments),
+        fetch(APIS.inquiries),
+        fetch(`${APIS.announcements}/admin/all`, {
+          headers: { Authorization: `Bearer ${getToken()}` },
+        }),
+      ]);
+
+      const newStats = { ...stats };
+
+      if (servicesRes.status === 'fulfilled' && servicesRes.value.ok) {
+        const data = await servicesRes.value.json();
+        newStats.servicesTotal = data.length;
+      }
+
+      if (appointmentsRes.status === 'fulfilled' && appointmentsRes.value.ok) {
+        const data = await appointmentsRes.value.json();
+        newStats.appointmentsTotal   = data.length;
+        newStats.appointmentsPending = data.filter(a => a.status === 'Pending').length;
+      }
+
+      if (inquiriesRes.status === 'fulfilled' && inquiriesRes.value.ok) {
+        const data = await inquiriesRes.value.json();
+        newStats.inquiriesTotal  = data.length;
+        newStats.inquiriesUnread = data.filter(i => !i.read).length;
+      }
+
+      if (announcementsRes.status === 'fulfilled' && announcementsRes.value.ok) {
+        const data = await announcementsRes.value.json();
+        newStats.announcementTotal  = data.length;
+        newStats.announcementActive = data.filter(a => a.status === 'Active').length;
+      }
+
+      setStats(newStats);
+    } catch (err) {
+      console.error('Failed to fetch dashboard stats', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchAnnouncementStats = async () => {
-      try {
-        const res = await fetch(`${API_BASE}/admin/all`, {
-          headers: { Authorization: `Bearer ${getToken()}` },
-        });
-        if (!res.ok) return;
-        const data = await res.json();
-        setAnnouncementTotal(data.length);
-        setAnnouncementActive(data.filter((a) => a.status === 'Active').length);
-      } catch {
-        // silently fail — keep dashes
-      }
-    };
-    fetchAnnouncementStats();
+    fetchAllStats();
+    // Auto-refresh every 60 seconds
+    const interval = setInterval(fetchAllStats, 60000);
+    return () => clearInterval(interval);
   }, []);
 
-  const stats = [
+  const statCards = [
     {
       label:   'Total Services',
-      value:   5,
+      value:   stats.servicesTotal,
       icon:    Stethoscope,
       iconBg:  'bg-teal-100',
       iconCls: 'text-teal-700',
-      trend:   '+1 this month',
+      trend:   stats.servicesTotal === '—' ? 'Loading…' : `${stats.servicesTotal} registered`,
     },
     {
       label:   'Appointments',
-      value:   24,
+      value:   stats.appointmentsTotal,
       icon:    CalendarCheck,
       iconBg:  'bg-blue-100',
       iconCls: 'text-blue-700',
-      trend:   '8 pending approval',
+      trend:   stats.appointmentsPending === '—' ? 'Loading…' : `${stats.appointmentsPending} pending approval`,
     },
     {
       label:   'Contact Inquiries',
-      value:   12,
+      value:   stats.inquiriesTotal,
       icon:    MessageSquare,
       iconBg:  'bg-orange-100',
       iconCls: 'text-orange-700',
-      trend:   '3 unread',
+      trend:   stats.inquiriesUnread === '—' ? 'Loading…' : `${stats.inquiriesUnread} unread`,
     },
     {
       label:   'Announcements',
-      value:   announcementTotal,
+      value:   stats.announcementTotal,
       icon:    Megaphone,
       iconBg:  'bg-purple-100',
       iconCls: 'text-purple-700',
-      trend:   announcementActive === '—'
-                 ? 'Loading…'
-                 : `${announcementActive} active`,
+      trend:   stats.announcementActive === '—' ? 'Loading…' : `${stats.announcementActive} active`,
     },
   ];
 
   return (
     <div className="space-y-8">
       {/* Page Title */}
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900">Dashboard</h2>
-        <p className="text-sm text-gray-500 mt-1">Welcome back! Here's a quick overview of the portal activity.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Dashboard</h2>
+          <p className="text-sm text-gray-500 mt-1">Welcome back! Here's a real-time overview of the portal activity.</p>
+        </div>
+        <button
+          onClick={fetchAllStats}
+          disabled={loading}
+          className="flex items-center gap-2 px-4 py-2 text-sm bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-60"
+          title="Refresh stats"
+        >
+          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-teal-600' : 'text-gray-500'}`} />
+          {loading ? 'Refreshing…' : 'Refresh'}
+        </button>
       </div>
 
       {/* Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
-        {stats.map(({ label, value, icon: Icon, iconBg, iconCls, trend }) => (
+        {statCards.map(({ label, value, icon: Icon, iconBg, iconCls, trend }) => (
           <div
             key={label}
             className="rounded-2xl p-5 border border-gray-100 bg-white shadow-sm flex items-start gap-4"
@@ -109,7 +159,11 @@ export default function Dashboard() {
               <Icon className={`w-6 h-6 ${iconCls}`} />
             </div>
             <div>
-              <p className="text-3xl font-bold text-gray-900">{value}</p>
+              <p className="text-3xl font-bold text-gray-900">
+                {loading && value === '—' ? (
+                  <span className="inline-block w-8 h-7 bg-gray-100 rounded animate-pulse"></span>
+                ) : value}
+              </p>
               <p className="text-sm font-medium text-gray-700 mt-0.5">{label}</p>
               <p className="text-xs text-gray-400 mt-1">{trend}</p>
             </div>
@@ -120,35 +174,8 @@ export default function Dashboard() {
       {/* Recent Announcements — live from DB */}
       <RecentAnnouncements />
 
-      {/* Recent Appointments */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-          <h3 className="text-base font-semibold text-gray-900">Recent Appointments</h3>
-          <a href="/admin/appointments" className="text-sm text-teal-600 hover:underline">View all →</a>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-gray-50 text-left text-gray-500 text-xs uppercase tracking-wide">
-                <th className="px-6 py-3">Farmer Name</th>
-                <th className="px-6 py-3">Animal</th>
-                <th className="px-6 py-3">Date</th>
-                <th className="px-6 py-3">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {recentAppointments.map((apt) => (
-                <tr key={apt.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-3 font-medium text-gray-900">{apt.farmer}</td>
-                  <td className="px-6 py-3 text-gray-600">{apt.animal}</td>
-                  <td className="px-6 py-3 text-gray-600">{apt.date}</td>
-                  <td className="px-6 py-3">{statusBadge(apt.status)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      {/* Recent Appointments — live from DB */}
+      <RecentAppointments />
     </div>
   );
 }
@@ -161,12 +188,11 @@ function RecentAnnouncements() {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetch(`${API_BASE}/admin/all`, {
+        const res = await fetch(`${APIS.announcements}/admin/all`, {
           headers: { Authorization: `Bearer ${getToken()}` },
         });
         if (!res.ok) throw new Error();
         const data = await res.json();
-        // Show the 3 most recent
         setItems(data.slice(0, 3));
       } catch {
         setItems([]);
@@ -215,6 +241,84 @@ function RecentAnnouncements() {
             </li>
           ))}
         </ul>
+      )}
+    </div>
+  );
+}
+
+/* ─── Recent Appointments widget ──────────────────────────────────────── */
+function RecentAppointments() {
+  const [items, setItems]     = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch(APIS.appointments);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        // Show the 5 most recent
+        setItems(data.slice(0, 5));
+      } catch {
+        setItems([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  const statusBadgeSmall = (status) => {
+    const map = {
+      Pending:  'bg-yellow-100 text-yellow-700',
+      Approved: 'bg-green-100 text-green-700',
+      Rejected: 'bg-red-100 text-red-700',
+    };
+    return (
+      <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${map[status] || 'bg-gray-100 text-gray-500'}`}>
+        {status}
+      </span>
+    );
+  };
+
+  return (
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h3 className="text-base font-semibold text-gray-900">Recent Appointments</h3>
+        <a href="/admin/appointments" className="text-sm text-teal-600 hover:underline">View all →</a>
+      </div>
+
+      {loading ? (
+        <div className="px-6 py-8 text-center text-sm text-gray-400">Loading…</div>
+      ) : items.length === 0 ? (
+        <div className="px-6 py-8 text-center text-sm text-gray-400">
+          No appointments yet.
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-gray-50 text-left text-gray-500 text-xs uppercase tracking-wide">
+                <th className="px-6 py-3">Farmer Name</th>
+                <th className="px-6 py-3 hidden sm:table-cell">Animal</th>
+                <th className="px-6 py-3 hidden md:table-cell">Service</th>
+                <th className="px-6 py-3">Date</th>
+                <th className="px-6 py-3">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {items.map((apt) => (
+                <tr key={apt._id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-3 font-medium text-gray-900">{apt.farmer}</td>
+                  <td className="px-6 py-3 text-gray-600 hidden sm:table-cell">{apt.animal}</td>
+                  <td className="px-6 py-3 text-gray-600 hidden md:table-cell">{apt.service}</td>
+                  <td className="px-6 py-3 text-gray-600">{apt.date}</td>
+                  <td className="px-6 py-3">{statusBadgeSmall(apt.status)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

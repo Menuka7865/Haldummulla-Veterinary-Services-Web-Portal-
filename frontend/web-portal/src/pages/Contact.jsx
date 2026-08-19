@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Send, CheckCircle, AlertCircle } from 'lucide-react';
+import emailjs from '@emailjs/browser';
 import Navbar from '../Components/Navbar.jsx';
 import Footer from '../Components/Footer.jsx';
 
+const API_BASE = 'http://localhost:5000/api';
+
 export default function Contact() {
+  const formRef = useRef(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -15,19 +19,13 @@ export default function Contact() {
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value
-    }));
-    // Clear error when typing
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (formErrors[name]) {
-      setFormErrors((prev) => ({
-        ...prev,
-        [name]: ''
-      }));
+      setFormErrors((prev) => ({ ...prev, [name]: '' }));
     }
   };
 
@@ -44,7 +42,7 @@ export default function Contact() {
     return errors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = validateForm();
     if (Object.keys(errors).length > 0) {
@@ -53,42 +51,55 @@ export default function Contact() {
     }
 
     setIsSubmitting(true);
+    setSubmitError('');
 
-    // Simulate API request call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmitSuccess(true);
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: ''
+    try {
+      // 1. Save inquiry to MongoDB database
+      const response = await fetch(`${API_BASE}/inquiries`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
       });
-      // Clear success message after 5 seconds
+
+      if (!response.ok) {
+        throw new Error('Failed to save inquiry');
+      }
+
+      // 2. Send email via EmailJS
+      await emailjs.sendForm(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_CONTACT_TEMPLATE_ID,
+        formRef.current,
+        { publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY }
+      );
+
+      setSubmitSuccess(true);
+      setFormData({ name: '', email: '', subject: '', message: '' });
       setTimeout(() => setSubmitSuccess(false), 5000);
-    }, 1500);
+    } catch (err) {
+      console.error('Submission error:', err);
+      setSubmitError('Something went wrong. Your message was saved but email may not have been sent. Please try again or contact us by phone.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  // Framer Motion Animation Variants
+  // Framer Motion Variants
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.1
-      }
-    }
+    visible: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.1 } }
   };
-
   const itemVariants = {
     hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { type: 'spring', stiffness: 100 }
-    }
+    visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } }
   };
+
+  const inputCls = (field) =>
+    `w-full px-4 py-2.5 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 ${
+      formErrors[field]
+        ? 'border-red-300 focus:border-red-400 focus:ring-red-100'
+        : 'border-gray-200 focus:border-teal-500 focus:ring-teal-100'
+    }`;
 
   return (
     <>
@@ -121,13 +132,9 @@ export default function Contact() {
           >
             {/* Left Column: Contact Info & Map */}
             <motion.div variants={itemVariants} className="lg:col-span-5 space-y-6">
-              
-              {/* Contact Details Card */}
               <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                 <h3 className="text-xl font-bold text-gray-900 mb-6 border-b pb-3">Office Information</h3>
-                
                 <div className="space-y-5">
-                  {/* Address */}
                   <div className="flex items-start space-x-3">
                     <MapPin className="h-6 w-6 text-teal-600 shrink-0 mt-0.5" />
                     <div>
@@ -139,8 +146,6 @@ export default function Contact() {
                       </p>
                     </div>
                   </div>
-
-                  {/* Telephone Numbers */}
                   <div className="flex items-start space-x-3">
                     <Phone className="h-6 w-6 text-teal-600 shrink-0 mt-0.5" />
                     <div>
@@ -156,8 +161,6 @@ export default function Contact() {
                       </p>
                     </div>
                   </div>
-
-                  {/* Email */}
                   <div className="flex items-start space-x-3">
                     <Mail className="h-6 w-6 text-teal-600 shrink-0 mt-0.5" />
                     <div>
@@ -169,8 +172,6 @@ export default function Contact() {
                       </p>
                     </div>
                   </div>
-
-                  {/* Working Hours */}
                   <div className="flex items-start space-x-3">
                     <Clock className="h-6 w-6 text-teal-600 shrink-0 mt-0.5" />
                     <div>
@@ -200,14 +201,13 @@ export default function Contact() {
                   ></iframe>
                 </div>
               </div>
-
             </motion.div>
 
             {/* Right Column: Contact Form */}
             <motion.div variants={itemVariants} className="lg:col-span-7">
               <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden">
                 <h3 className="text-xl font-bold text-gray-900 mb-6 border-b pb-3">Send us a Message</h3>
-                
+
                 <AnimatePresence>
                   {submitSuccess && (
                     <motion.div
@@ -223,102 +223,62 @@ export default function Contact() {
                       </div>
                     </motion.div>
                   )}
+                  {submitError && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start space-x-3 text-red-800"
+                    >
+                      <AlertCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+                      <p className="text-sm">{submitError}</p>
+                    </motion.div>
+                  )}
                 </AnimatePresence>
 
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  {/* Name field */}
+                {/* The form ref is used by EmailJS to read field values */}
+                <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid grid-cols-1 gap-1">
-                    <label htmlFor="name" className="text-sm font-semibold text-gray-700">
-                      Full Name
-                    </label>
+                    <label htmlFor="name" className="text-sm font-semibold text-gray-700">Full Name</label>
                     <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      className={`w-full px-4 py-2.5 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 ${
-                        formErrors.name
-                          ? 'border-red-300 focus:border-red-400 focus:ring-red-100'
-                          : 'border-gray-200 focus:border-teal-500 focus:ring-teal-100'
-                      }`}
-                      placeholder="e.g. Sunil Perera"
+                      type="text" id="name" name="name"
+                      value={formData.name} onChange={handleInputChange}
+                      className={inputCls('name')} placeholder="e.g. Sunil Perera"
                     />
-                    {formErrors.name && (
-                      <p className="text-xs text-red-500 mt-1">{formErrors.name}</p>
-                    )}
+                    {formErrors.name && <p className="text-xs text-red-500 mt-1">{formErrors.name}</p>}
                   </div>
 
-                  {/* Email field */}
                   <div className="grid grid-cols-1 gap-1">
-                    <label htmlFor="email" className="text-sm font-semibold text-gray-700">
-                      Email Address
-                    </label>
+                    <label htmlFor="email" className="text-sm font-semibold text-gray-700">Email Address</label>
                     <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className={`w-full px-4 py-2.5 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 ${
-                        formErrors.email
-                          ? 'border-red-300 focus:border-red-400 focus:ring-red-100'
-                          : 'border-gray-200 focus:border-teal-500 focus:ring-teal-100'
-                      }`}
-                      placeholder="e.g. sunil@example.com"
+                      type="email" id="email" name="email"
+                      value={formData.email} onChange={handleInputChange}
+                      className={inputCls('email')} placeholder="e.g. sunil@example.com"
                     />
-                    {formErrors.email && (
-                      <p className="text-xs text-red-500 mt-1">{formErrors.email}</p>
-                    )}
+                    {formErrors.email && <p className="text-xs text-red-500 mt-1">{formErrors.email}</p>}
                   </div>
 
-                  {/* Subject field */}
                   <div className="grid grid-cols-1 gap-1">
-                    <label htmlFor="subject" className="text-sm font-semibold text-gray-700">
-                      Subject
-                    </label>
+                    <label htmlFor="subject" className="text-sm font-semibold text-gray-700">Subject</label>
                     <input
-                      type="text"
-                      id="subject"
-                      name="subject"
-                      value={formData.subject}
-                      onChange={handleInputChange}
-                      className={`w-full px-4 py-2.5 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 ${
-                        formErrors.subject
-                          ? 'border-red-300 focus:border-red-400 focus:ring-red-100'
-                          : 'border-gray-200 focus:border-teal-500 focus:ring-teal-100'
-                      }`}
-                      placeholder="e.g. Inquiry about dairy cattle vaccination schedule"
+                      type="text" id="subject" name="subject"
+                      value={formData.subject} onChange={handleInputChange}
+                      className={inputCls('subject')} placeholder="e.g. Inquiry about dairy cattle vaccination schedule"
                     />
-                    {formErrors.subject && (
-                      <p className="text-xs text-red-500 mt-1">{formErrors.subject}</p>
-                    )}
+                    {formErrors.subject && <p className="text-xs text-red-500 mt-1">{formErrors.subject}</p>}
                   </div>
 
-                  {/* Message field */}
                   <div className="grid grid-cols-1 gap-1">
-                    <label htmlFor="message" className="text-sm font-semibold text-gray-700">
-                      Message
-                    </label>
+                    <label htmlFor="message" className="text-sm font-semibold text-gray-700">Message</label>
                     <textarea
-                      id="message"
-                      name="message"
-                      rows="5"
-                      value={formData.message}
-                      onChange={handleInputChange}
-                      className={`w-full px-4 py-2.5 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 resize-none ${
-                        formErrors.message
-                          ? 'border-red-300 focus:border-red-400 focus:ring-red-100'
-                          : 'border-gray-200 focus:border-teal-500 focus:ring-teal-100'
-                      }`}
+                      id="message" name="message" rows="5"
+                      value={formData.message} onChange={handleInputChange}
+                      className={`${inputCls('message')} resize-none`}
                       placeholder="Type your message here..."
                     ></textarea>
-                    {formErrors.message && (
-                      <p className="text-xs text-red-500 mt-1">{formErrors.message}</p>
-                    )}
+                    {formErrors.message && <p className="text-xs text-red-500 mt-1">{formErrors.message}</p>}
                   </div>
 
-                  {/* Submit Button */}
                   <button
                     type="submit"
                     disabled={isSubmitting}
