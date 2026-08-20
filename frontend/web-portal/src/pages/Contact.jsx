@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '../config';
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle, AlertCircle } from 'lucide-react';
@@ -5,7 +6,7 @@ import emailjs from '@emailjs/browser';
 import Navbar from '../Components/Navbar.jsx';
 import Footer from '../Components/Footer.jsx';
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = `${API_BASE_URL}`;
 
 export default function Contact() {
   const formRef = useRef(null);

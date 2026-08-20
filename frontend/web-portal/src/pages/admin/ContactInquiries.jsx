@@ -1,7 +1,8 @@
+import { API_BASE_URL } from '../../config';
 import React, { useState, useEffect } from 'react';
 import { Eye, X, Trash2, RefreshCw } from 'lucide-react';
 
-const API_BASE = 'http://localhost:5000/api/inquiries';
+const API_BASE = `${API_BASE_URL}/inquiries`;
 
 export default function ContactInquiries() {
   const [inquiries, setInquiries] = useState([]);

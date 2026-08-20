@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '../config';
 import React, { useState, useEffect } from "react";
 import Navbar from "../Components/Navbar.jsx";
 import Footer from "../Components/Footer.jsx";
@@ -6,7 +7,7 @@ import {
   MapPin, BookOpen, Loader2, AlertCircle, Stethoscope,
 } from "lucide-react";
 
-const API_BASE = "http://localhost:5000/api/services";
+const API_BASE = `${API_BASE_URL}/services`;
 
 const Services = () => {
   const [services, setServices] = useState([]);

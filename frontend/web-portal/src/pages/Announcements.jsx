@@ -1,10 +1,11 @@
+import { API_BASE_URL } from '../config';
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, ChevronDown, Search, Loader2, AlertCircle, Megaphone } from 'lucide-react';
 import Navbar from '../Components/Navbar.jsx';
 import Footer from '../Components/Footer.jsx';
 
-const API_BASE = 'http://localhost:5000/api/announcements';
+const API_BASE = `${API_BASE_URL}/announcements`;
 
 const CATEGORIES = [
   'All Categories',

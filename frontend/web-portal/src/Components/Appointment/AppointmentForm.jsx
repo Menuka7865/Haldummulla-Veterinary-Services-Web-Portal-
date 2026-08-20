@@ -1,8 +1,9 @@
+import { API_BASE_URL } from '../../config';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import emailjs from '@emailjs/browser';
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = `${API_BASE_URL}`;
 
 const AppointmentForm = ({ onAddAppointment }) => {
   const [formData, setFormData] = useState({

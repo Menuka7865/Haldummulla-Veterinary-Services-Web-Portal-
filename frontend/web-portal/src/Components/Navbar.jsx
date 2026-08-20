@@ -56,9 +56,9 @@ export default function Navbar() {
   const navItems = [
     { key: 'home', path: '/home' },
     { key: 'services', path: '/services' },
-    { key: 'appointments', path: '/appointments' },
     { key: 'announcements', path: '/announcements' },
     { key: 'resources', path: '/resources' },
+    { key: 'appointments', path: '/appointments' },
     { key: 'contact', path: '/contact' },
   ];
 

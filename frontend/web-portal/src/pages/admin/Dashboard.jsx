@@ -1,11 +1,12 @@
+import { API_BASE_URL } from '../../config';
 import React, { useState, useEffect } from 'react';
 import { Stethoscope, CalendarCheck, MessageSquare, Megaphone, RefreshCw } from 'lucide-react';
 
 const APIS = {
-  announcements: 'http://localhost:5000/api/announcements',
-  services:      'http://localhost:5000/api/services',
-  appointments:  'http://localhost:5000/api/appointments',
-  inquiries:     'http://localhost:5000/api/inquiries',
+  announcements: `${API_BASE_URL}/announcements`,
+  services:      `${API_BASE_URL}/services`,
+  appointments:  `${API_BASE_URL}/appointments`,
+  inquiries:     `${API_BASE_URL}/inquiries`,
 };
 
 const getToken = () => {

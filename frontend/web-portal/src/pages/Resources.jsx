@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '../config';
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Components/Navbar.jsx';
 import Footer from '../Components/Footer.jsx';
@@ -9,7 +10,7 @@ import VideoSection from '../Components/Resources/VideoSection';
 import DownloadSection from '../Components/Resources/DownloadSection';
 import { Loader2, AlertCircle } from 'lucide-react';
 
-const API_BASE = 'http://localhost:5000/api/resources';
+const API_BASE = `${API_BASE_URL}/resources`;
 
 const staticCategories = [
   { id: 1, title: 'Dairy Farming', color: '#e6f4f1', iconColor: '#0d9488', items: ['Feeding Management', 'Milk Production Tips', 'Calf Rearing', 'Farm Hygiene'] },

@@ -1,7 +1,8 @@
+import { API_BASE_URL } from '../../config';
 import React, { useState, useEffect } from 'react';
 import { Plus, Pencil, Trash2, X, Eye, Loader2, AlertCircle } from 'lucide-react';
 
-const API_BASE = 'http://localhost:5000/api/announcements';
+const API_BASE = `${API_BASE_URL}/announcements`;
 
 const emptyForm = { title: '', date: '', status: 'Active', content: '', category: 'General' };
 

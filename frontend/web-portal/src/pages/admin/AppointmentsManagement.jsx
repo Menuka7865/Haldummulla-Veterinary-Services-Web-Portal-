@@ -1,7 +1,8 @@
+import { API_BASE_URL } from '../../config';
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, XCircle, Eye, X, Trash2, RefreshCw } from 'lucide-react';
 
-const API_BASE = 'http://localhost:5000/api/appointments';
+const API_BASE = `${API_BASE_URL}/appointments`;
 
 const statusBadge = (status) => {
   const map = {

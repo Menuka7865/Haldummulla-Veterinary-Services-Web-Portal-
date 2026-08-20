@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '../../config';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '../../Components/Navbar';
@@ -6,30 +7,80 @@ import AppointmentForm from '../../Components/Appointment/AppointmentForm';
 import AppointmentHistory from '../../Components/Appointment/AppointmentHistory';
 
 const AppointmentPage = () => {
-  const [appointments, setAppointments] = useState([
-    {
-      id: '1',
-      date: 'Oct 28, 2023',
-      time: '10:00 AM',
-      service: 'Vaccination',
-      status: 'Approved',
-    }
-  ]);
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch appointments on mount
+  React.useEffect(() => {
+    const fetchUserAppointments = async () => {
+      try {
+        const storedUser = localStorage.getItem('user');
+        if (!storedUser) {
+          setLoading(false);
+          return;
+        }
+
+        const user = JSON.parse(storedUser);
+        
+        const response = await fetch(`${API_BASE_URL}/appointments`);
+        if (response.ok) {
+          const allAppointments = await response.json();
+          // Filter by the logged-in user's name
+          const userAppointments = allAppointments.filter(
+            app => app.farmer.toLowerCase() === user.name.toLowerCase()
+          );
+          
+          // Format date for history view
+          const formattedAppointments = userAppointments.map(app => {
+            let formattedDate = app.date;
+            try {
+              const [year, month, day] = app.date.split('-');
+              if (year && month && day) {
+                const localDate = new Date(year, month - 1, day);
+                formattedDate = localDate.toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                });
+              }
+            } catch (e) {
+              console.error('Date parsing error', e);
+            }
+            return {
+              id: app._id,
+              date: formattedDate,
+              time: app.time,
+              service: app.service,
+              status: app.status
+            };
+          });
+
+          setAppointments(formattedAppointments);
+        }
+      } catch (error) {
+        console.error('Failed to fetch appointments:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserAppointments();
+  }, []);
 
   const handleAddAppointment = (newApp) => {
     // Format date from YYYY-MM-DD to MMM DD, YYYY
     let formattedDate = newApp.date;
     try {
-      const dateObj = new Date(newApp.date);
-      // Ensure we don't get timezone offset issues by splitting
-      const [year, month, day] = newApp.date.split('-');
-      const localDate = new Date(year, month - 1, day);
-      
-      formattedDate = localDate.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-      });
+      if (newApp.date.includes('-')) {
+        const [year, month, day] = newApp.date.split('-');
+        const localDate = new Date(year, month - 1, day);
+        
+        formattedDate = localDate.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+        });
+      }
     } catch (e) {
       console.error('Date parsing error', e);
     }
